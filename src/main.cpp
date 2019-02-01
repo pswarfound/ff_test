@@ -11,27 +11,49 @@
 #include "TaskPool.hpp"
 #include "FileList.hpp"
 
-FileList g_list_file;
-Config &g_cfg = Config::get_instance();
 
-static int intput_collect()
+static bool ff_filter(const string &cwd, const struct dirent *de)
 {
-    if (!g_cfg.m_sDirPath.empty()) {
-        g_list_file.search(g_cfg.m_sDirPath, 0);
+    string fullpath = cwd + de->d_name;
+
+    struct stat st;
+
+    if (stat(fullpath.c_str(), &st) < 0) {
+        return true;
     }
-    if (!g_cfg.m_sFilePath.empty()) {
-        g_list_file.add(g_cfg.m_sFilePath);
+
+    switch (st.st_mode & S_IFMT) {
+    case S_IFREG:
+        return false;
+    default:
+        return true;
     }
-    if (g_list_file.m_lstFiles.empty()) {
+}
+
+static int intput_collect(FileList &lst)
+{
+	Config &cfg = Config::get_instance();
+
+	lst.set_filter(ff_filter);
+	if (!cfg.m_sDirPath.empty()) {
+	    lst.search(cfg.m_sDirPath, 0);
+    }
+    if (!cfg.m_sFilePath.empty()) {
+        lst.add(cfg.m_sFilePath);
+    }
+    if (lst.m_lstFiles.empty()) {
         return -1;
     }
+
     return 0;
 }
 
 static void wait_job_done()
 {
+	Config &cfg = Config::get_instance();
     TaskPool &task_pool = TaskPool::get_instance();
-    int seclive = g_cfg.m_seclive;
+
+    int seclive = cfg.m_seclive;
     if (seclive < 0) {
         while (1) {
             pause();
@@ -51,24 +73,27 @@ static void wait_job_done()
 
 int main(int argc, char **argv)
 {
-    if (!g_cfg.parse(argc, argv)) {
+	Config &cfg = Config::get_instance();
+	FileList input_file_list;
+
+    if (!cfg.parse(argc, argv)) {
         return -1;
     }
 
-    if (g_cfg.m_help) {
-        g_cfg.show();
+    if (cfg.m_help) {
+    	cfg.show();
     }
 
     // init ffmpeg
     ff_init();
     // collect input files to decode
-    if (intput_collect() < 0) {
+    if (intput_collect(input_file_list) < 0) {
         printf("no input file\n");
         return -1;
     }
 
     TaskPool &task_pool = TaskPool::get_instance();
-    task_pool.init(&g_list_file.m_lstFiles);
+    task_pool.init(&input_file_list.m_lstFiles);
     task_pool.start();
 
     wait_job_done();

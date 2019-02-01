@@ -32,4 +32,5 @@ public:
     uint16_t m_get_buffer;
     uint16_t m_help;
     int     m_seclive;
+    uint16_t	m_nProgramme;
 };

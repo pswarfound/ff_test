@@ -17,7 +17,7 @@ public:
     bool stop();
     bool release();
 private:
-    static void *task_dec(void *p);
+    static void *svc(void *p);
     sem_t m_sem;
     pthread_t m_tid;
     bool m_bExit;

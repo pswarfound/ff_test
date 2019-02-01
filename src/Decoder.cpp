@@ -27,6 +27,7 @@ void cb_log(void *s, int a, const char *m, va_list va)
 
 int ff_init(void)
 {
+	av_version_info();
     av_register_all();
     av_log_set_level(AV_LOG_FATAL);
     av_log_set_callback(cb_log);
@@ -168,7 +169,6 @@ Decoder::Decoder()
     : m_impl(new DecoderImpl(this)) , m_mem_used(0),memused_max(0),
 memused_before_open(0), memused_before_dec(0), decode_cnt(0)
 {
-    printf("%s\n", av_version_info());
     mem_demux = 0;
     mem_snd_pkt = 0;
     mem_frm = 0;

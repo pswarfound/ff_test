@@ -19,7 +19,7 @@ bool Config::parse(int argc, char **argv)
 {
     int opt;
 
-    while ((opt = getopt(argc, argv, "h::t:c:d:f:o:s:b:l:")) != -1) {
+    while ((opt = getopt(argc, argv, "h::t:c:d:f:o:s:b:l:p:")) != -1) {
         switch (opt) {
         case 'h':
             m_help = 1;
@@ -38,6 +38,9 @@ bool Config::parse(int argc, char **argv)
             }
             break;
             }
+        case 'p':
+        	m_nProgramme = atoi(optarg);
+        	break;
         case 'f':
             m_sFilePath = optarg;
             break;

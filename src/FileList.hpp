@@ -8,7 +8,7 @@ using std::string;
 using std::list;
 
 typedef list<string> list_file_t;
-typedef bool (*filter_t)(struct dirent *de);
+typedef bool (*filter_t)(const string &cwd, const struct dirent *de);
 class FileList
 {
 public:
@@ -19,7 +19,9 @@ public:
     int search(const string &name, int opt);
     bool add(const string &name);
     void show(void);
-    void set_filter(filter_t filter);
+    void set_filter(filter_t filter) {
+        m_filter = filter;
+    }
     list_file_t m_lstFiles;
     filter_t    m_filter;
 };

@@ -2,10 +2,11 @@
 #include <dirent.h>
 #include <iostream>
 #include <errno.h>
+#include <sys/stat.h>
 #include <string.h>
 #include "FileList.hpp"
 
-static bool filter_default(struct dirent *de)
+static bool filter_default(const string &cwd, const struct dirent *de)
 {
     return false;
 }
@@ -40,13 +41,14 @@ int FileList::search(const string &name, int opt)
 
     struct dirent *de;
     while ((de = readdir(d))) {
-        if (de->d_type != DT_REG) {
+        if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, "..")) {
             continue;
         }
-        if (m_filter(de)) {
+        string path;
+        if (m_filter(name, de)) {
             continue;
         }
-        m_lstFiles.push_back(de->d_name);
+        m_lstFiles.push_back(name + de->d_name);
     }
 
     closedir(d);

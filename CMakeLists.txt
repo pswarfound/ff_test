@@ -7,10 +7,11 @@ set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
 
 set(CMAKE_C_FLAGS "-g -mpreferred-stack-boundary=4 -mstackrealign")
 
-set(CMAKE_CXX_FLAGS "-g -O3 -mpreferred-stack-boundary=4 -mstackrealign")
+set(CMAKE_CXX_FLAGS "-g -O0 -mpreferred-stack-boundary=4 -mstackrealign")
 
-set(FF_INSTALL_PATH /mnt/sda7/project/ffmpeg/build_sw)
-set(FF_SRC_PATH /mnt/sda7/project/ffmpeg/src)
+set(FF_INSTALL_PATH /mnt/sda7/project/ffmpeg/b32)
+set(FF_SRC_PATH /mnt/sda7/project/ffmpeg/src_b32)
 
+add_subdirectory(libsrc)
 add_subdirectory(src)
 
